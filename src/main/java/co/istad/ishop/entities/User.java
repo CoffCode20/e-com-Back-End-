@@ -50,12 +50,7 @@ public class User {
 
     private Date createdDate;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
+    @ManyToMany(targetEntity = Role.class)
     private Set<Role> roles;
 
 

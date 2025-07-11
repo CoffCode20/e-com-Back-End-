@@ -22,9 +22,4 @@ public class Role {
     private String uuid;
 
     private String name;
-
-    @ManyToMany(mappedBy = "roles")
-    private Set<User> users = new HashSet<>();
-
-
 }
