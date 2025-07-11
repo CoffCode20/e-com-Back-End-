@@ -5,8 +5,13 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-@Configuration
 
+/**
+ * for config another domain port access the backend served that web
+ * authors: matra
+ */
+
+@Configuration
 public class CorsConfig implements WebMvcConfigurer {
 
     @Override

@@ -6,4 +6,5 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @OpenAPIDefinition(info = @Info(title = "ISHOP API", version = "v1"))
 public class OpenApiConfig {
+
 }
