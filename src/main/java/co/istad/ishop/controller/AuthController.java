@@ -44,28 +44,28 @@ public class AuthController {
                     HttpStatus.OK.toString(),
                     "Login successfully",
                     LocalDateTime.now().toString(),
-                    Map.of("data", response)
+                    Map.of("details", response)
             );
         } catch (UsernameNotFoundException e) {
             return new BaseResponse<>(
                     HttpStatus.UNAUTHORIZED.toString(),
                     "Authentication failed",
                     LocalDateTime.now().toString(),
-                    Map.of("data", "User not found")
+                    Map.of("details", "User not found")
             );
         } catch (UserNotVerifiedException e) {
             return new BaseResponse<>(
                     HttpStatus.UNAUTHORIZED.toString(),
                     "Authentication failed",
                     LocalDateTime.now().toString(),
-                    Map.of("data", "User not verified")
+                    Map.of("details", "User not verified")
             );
         } catch (InvalidPasswordException e) {
             return new BaseResponse<>(
                     HttpStatus.UNAUTHORIZED.toString(),
                     "Authentication failed",
                     LocalDateTime.now().toString(),
-                    Map.of("data", "Invalid password")
+                    Map.of("details", "Invalid password")
             );
         }
     }
@@ -78,7 +78,7 @@ public class AuthController {
                     HttpStatus.OK.toString(),
                     "New token generated successfully",
                     LocalDateTime.now().toString(),
-                    Map.of("data", refreshToken)
+                    Map.of("details", refreshToken)
             );
         } catch (JwtException e) {
             throw new JwtException("Invalid refresh token");

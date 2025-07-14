@@ -87,7 +87,7 @@ public class UserController {
     @PatchMapping("/uuid/{userUuid}/set-new-password")
     public ResponseEntity<String> setNewPassword(@Valid @PathVariable String userUuid, @RequestBody SetNewPasswordRequest setNewPasswordRequest) {
         userService.forgotPassword(userUuid, setNewPasswordRequest);
-        return ResponseEntity.ok("Password changed successfully");
+        return ResponseEntity.ok("Password reset successfully");
     }
 
     @PatchMapping("/uuid/{userUuid}/update-password")
