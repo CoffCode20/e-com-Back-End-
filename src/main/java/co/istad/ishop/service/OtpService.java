@@ -31,7 +31,7 @@ public class OtpService {
         otpEntity.setOtp(otpHash);
         otpEntity.setEmail(email);
         otpEntity.setCreatedAt(LocalDateTime.now());
-        otpEntity.setExpiresAt(LocalDateTime.now().plusMinutes(2));
+        otpEntity.setExpiresAt(LocalDateTime.now().plusMinutes(1));
         otpRepository.save(otpEntity);
 
         emailService.sentOptEmail(email, otp);
@@ -39,12 +39,11 @@ public class OtpService {
 
     public void verifyOtp(String otp) {
         Otp otpEntity = otpRepository.findAll().stream()
-                .filter(o -> passwordEncoder.matches(otp, o.getOtp()))
+                .filter(o -> o.getExpiresAt().isAfter(LocalDateTime.now())) // Only non-expired
+                .filter(o -> passwordEncoder.matches(otp, o.getOtp()))      // Then match
                 .findFirst()
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid or Expired OTP"));
-        if (otpEntity.getExpiresAt().isBefore(LocalDateTime.now())) {
-            otpRepository.delete(otpEntity);
-        }
+
         User user = userRepository.findByEmail(otpEntity.getEmail());
         if(user == null) {
             throw new ApiException(HttpStatus.NOT_FOUND, "User not found for email: " + otpEntity.getEmail());

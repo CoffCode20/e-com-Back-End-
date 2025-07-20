@@ -102,7 +102,7 @@ public class EmailService {
                         <p>Hello,</p>
                         <p>Your one-time password (OTP) for SecureApp is:</p>
                         <div class="otp">%s</div>
-                        <p>This OTP is valid for 5 minutes. Please do not share it with anyone.</p>
+                        <p>This OTP is valid for 2 minutes. Please do not share it with anyone.</p>
                         <p>If you did not request this, please ignore this email or contact our support team.</p>
                     </div>
                     <div class="footer">

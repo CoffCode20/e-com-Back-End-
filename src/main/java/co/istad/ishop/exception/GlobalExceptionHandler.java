@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -16,7 +17,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<?> handle(ApiException ex) {
-        ErrorRespond errorRespond = ErrorRespond.builder()
+        ErrorRespond<Object> errorRespond = ErrorRespond.builder()
                 .code(ex.getHttpStatus().value())
                 .message("Error Service")
                 .timestamp(LocalDateTime.now())
@@ -27,7 +28,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<?> handleIllegalArgument(ResponseStatusException ex) {
-        ErrorRespond errorRespond = ErrorRespond.builder()
+        ErrorRespond<Object> errorRespond = ErrorRespond.builder()
                 .code(ex.getStatusCode().value())
                 .message("Error Service")
                 .timestamp(LocalDateTime.now())
@@ -36,19 +37,28 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(ex.getStatusCode()).body(errorRespond);
     }
 
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<BaseResponse<Object>> handleUsernameNotFoundException(UsernameNotFoundException ex) {
-        return buildErrorResponse(HttpStatus.NOT_FOUND, "User not found");
+    public ResponseEntity<ErrorRespond<Object>> handleUsernameNotFoundException(UsernameNotFoundException ex) {
+         ErrorRespond<Object> errorRespond = ErrorRespond.builder()
+                .code(HttpStatus.NOT_FOUND.value())
+                .message("Error Service")
+                .timestamp(LocalDateTime.now())
+                .data(ex.getMessage())
+                .build();
+         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorRespond);
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(UserNotVerifiedException.class)
     public ResponseEntity<BaseResponse<Object>> handleUserNotVerifiedException(UserNotVerifiedException ex) {
-        return buildErrorResponse(HttpStatus.UNAUTHORIZED, "User not verified");
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, "User not verified");
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(InvalidPasswordException.class)
     public ResponseEntity<BaseResponse<Object>> handleInvalidPasswordException(InvalidPasswordException ex) {
-        return buildErrorResponse(HttpStatus.UNAUTHORIZED, "Invalid password");
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, "Invalid password");
     }
 
     @ExceptionHandler(Exception.class)

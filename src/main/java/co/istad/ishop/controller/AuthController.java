@@ -11,6 +11,7 @@ import co.istad.ishop.service.impl.AuthServiceImpl;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,46 +30,52 @@ public class AuthController {
     private final RateLimiter rateLimiter;
 
     @PostMapping("/login")
-    public BaseResponse<Object> login(@RequestBody AuthRequest request) {
+    public ResponseEntity<BaseResponse<Object>> login(@RequestBody AuthRequest request) {
         if (!rateLimiter.resolveBucket(request.getUsername()).tryConsume(1)) {
-            return new BaseResponse<>(
-                    HttpStatus.TOO_MANY_REQUESTS.toString(),
-                    "Too many login attempts",
-                    LocalDateTime.now().toString(),
-                    null
-            );
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                    .body(new BaseResponse<>(
+                            HttpStatus.TOO_MANY_REQUESTS.toString(),
+                            "Too many login attempts",
+                            LocalDateTime.now().toString(),
+                            null
+                    ));
         }
+
         try {
             AuthResponse response = authService.login(request);
-            return new BaseResponse<>(
+            return ResponseEntity.ok(new BaseResponse<>(
                     HttpStatus.OK.toString(),
                     "Login successfully",
                     LocalDateTime.now().toString(),
                     Map.of("details", response)
-            );
+            ));
         } catch (UsernameNotFoundException e) {
-            return new BaseResponse<>(
-                    HttpStatus.UNAUTHORIZED.toString(),
-                    "Authentication failed",
-                    LocalDateTime.now().toString(),
-                    Map.of("details", "User not found")
-            );
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new BaseResponse<>(
+                            HttpStatus.NOT_FOUND.toString(),
+                            "Authentication failed",
+                            LocalDateTime.now().toString(),
+                            Map.of("details", "User not found")
+                    ));
         } catch (UserNotVerifiedException e) {
-            return new BaseResponse<>(
-                    HttpStatus.UNAUTHORIZED.toString(),
-                    "Authentication failed",
-                    LocalDateTime.now().toString(),
-                    Map.of("details", "User not verified")
-            );
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new BaseResponse<>(
+                            HttpStatus.BAD_REQUEST.toString(),
+                            "Authentication failed",
+                            LocalDateTime.now().toString(),
+                            Map.of("details", "User not verified")
+                    ));
         } catch (InvalidPasswordException e) {
-            return new BaseResponse<>(
-                    HttpStatus.UNAUTHORIZED.toString(),
-                    "Authentication failed",
-                    LocalDateTime.now().toString(),
-                    Map.of("details", "Invalid password")
-            );
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new BaseResponse<>(
+                            HttpStatus.BAD_REQUEST.toString(),
+                            "Authentication failed",
+                            LocalDateTime.now().toString(),
+                            Map.of("details", "Invalid password")
+                    ));
         }
     }
+
 
     @PostMapping("/refresh")
     public BaseResponse<Object> refresh(@RequestBody RefreshTokenRequest request) {

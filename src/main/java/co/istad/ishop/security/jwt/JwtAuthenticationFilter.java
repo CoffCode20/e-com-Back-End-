@@ -43,6 +43,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String token = authHeader.substring(7);
+
+        // only allow the access token to authentication
+        if(!jwtService.isAccessToken(token)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         String username = jwtService.extractUsername(token);
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {

@@ -1,7 +1,6 @@
 package co.istad.ishop.security.jwt;
 
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,27 +32,29 @@ public class JwtService {
         return Jwts.builder()
                 .subject(userDetails.getUsername())
                 .claim("roles", roles)
+                .claim("token_type", "access_token")
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + accessTokenExpiry))
-                .signWith(keyUtil.getPrivateKey(), SignatureAlgorithm.RS256)
+                .signWith(keyUtil.getPrivateKey())
                 .compact();
     }
 
     public String generateRefreshToken(String username) {
         return Jwts.builder()
                 .subject(username)
+                .claim("token_type", "refresh_token")
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + refreshTokenExpiry))
-                .signWith(keyUtil.getPrivateKey(), SignatureAlgorithm.RS256)
+                .signWith(keyUtil.getPrivateKey())
                 .compact();
     }
 
     public boolean isTokenValid(String token) {
         try {
             Jwts.parser()
-                    .setSigningKey(keyUtil.getPublicKey())
+                    .verifyWith(keyUtil.getPublicKey())
                     .build()
-                    .parseClaimsJws(token);
+                    .parseSignedClaims(token);
             return true;
         } catch (Exception e) {
             return false;
@@ -62,11 +63,27 @@ public class JwtService {
 
     public String extractUsername(String token) {
         return Jwts.parser()
-                .setSigningKey(keyUtil.getPublicKey())
+                .verifyWith(keyUtil.getPublicKey())
                 .build()
-                .parseClaimsJws(token)
-                .getBody()
+                .parseSignedClaims(token)
+                .getPayload()
                 .getSubject();
+    }
+
+    public String getTokenType(String token) {
+        return Jwts.parser()
+                .verifyWith(keyUtil.getPublicKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("token_type", String.class);
+    }
+
+    public boolean isAccessToken(String token) {
+        return "access_token".equals(getTokenType(token));
+    }
+    public boolean isRefreshToken(String token) {
+        return "refresh_token".equals(getTokenType(token));
     }
 
 }
