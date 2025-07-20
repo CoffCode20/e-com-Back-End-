@@ -3,6 +3,7 @@ package co.istad.ishop.exception;
 import co.istad.ishop.model.response.BaseResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -47,6 +48,18 @@ public class GlobalExceptionHandler {
                 .data(ex.getMessage())
                 .build();
          return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorRespond);
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorRespond<Object>> handleAccessDeniedException(AccessDeniedException ex) {
+        ErrorRespond<Object> errorRespond = ErrorRespond.builder()
+                .code(HttpStatus.FORBIDDEN.value())
+                .message("Error Service")
+                .timestamp(LocalDateTime.now())
+                .data(ex.getMessage())
+                .build();
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorRespond);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

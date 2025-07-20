@@ -8,6 +8,7 @@ import co.istad.ishop.security.jwt.JwtService;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
@@ -36,7 +37,6 @@ public class AuthServiceImpl {
 
             return new AuthResponse(accessToken, refreshToken, "Bearer");
         } catch (BadCredentialsException e) {
-            HttpStatus status = HttpStatus.UNAUTHORIZED;
             throw new InvalidPasswordException("Invalid password");
         } catch (UsernameNotFoundException e) {
             throw new UsernameNotFoundException("Username not found");
@@ -51,6 +51,9 @@ public class AuthServiceImpl {
     public AuthResponse refreshToken(String refreshToken) {
         if (!jwtService.isTokenValid(refreshToken)) {
             throw new JwtException("Refresh token is invalid");
+        }
+        if(!jwtService.isRefreshToken(refreshToken)) {
+            throw new AccessDeniedException("This not the refresh token");
         }
 
         String username = jwtService.extractUsername(refreshToken);
