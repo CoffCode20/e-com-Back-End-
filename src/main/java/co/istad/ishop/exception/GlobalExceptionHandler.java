@@ -38,7 +38,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(ex.getStatusCode()).body(errorRespond);
     }
 
-    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<ErrorRespond<Object>> handleUsernameNotFoundException(UsernameNotFoundException ex) {
          ErrorRespond<Object> errorRespond = ErrorRespond.builder()
@@ -50,16 +49,15 @@ public class GlobalExceptionHandler {
          return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorRespond);
     }
 
-    @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorRespond<Object>> handleAccessDeniedException(AccessDeniedException ex) {
         ErrorRespond<Object> errorRespond = ErrorRespond.builder()
-                .code(HttpStatus.FORBIDDEN.value())
-                .message("Error Service")
+                .code(HttpStatus.BAD_REQUEST.value())
+                .message("Error Form User Input")
                 .timestamp(LocalDateTime.now())
                 .data(ex.getMessage())
                 .build();
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorRespond);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorRespond);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

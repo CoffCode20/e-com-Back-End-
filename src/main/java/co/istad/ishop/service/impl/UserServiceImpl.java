@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public User createUser(UserCreateDTO userCreateDto) {
+    public void createUser(UserCreateDTO userCreateDto) {
         User user = userMapper.toUser(userCreateDto);
         // handle exception for register
         if (userRepository.existsByUsername(user.getUsername())) {
@@ -67,7 +67,6 @@ public class UserServiceImpl implements UserService {
         }catch (MessagingException e){
             throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to send OTP.");
         }
-        return user;
     }
 
     @Override
@@ -148,7 +147,7 @@ public class UserServiceImpl implements UserService {
 
     // method to promote normal USER to ADMIN
     @Override
-    public User promoteUserToAdmin(String username) {
+    public void promoteUserToAdmin(String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -158,6 +157,6 @@ public class UserServiceImpl implements UserService {
         }
 
         user.getRoles().add(adminRole);
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 }

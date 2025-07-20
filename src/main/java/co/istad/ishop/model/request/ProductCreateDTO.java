@@ -1,11 +1,10 @@
 package co.istad.ishop.model.request;
 
+import java.util.Set;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import lombok.Builder;
-import lombok.Data;
-
-import java.util.Set;
 
 @Builder
 public record ProductCreateDTO(

@@ -42,7 +42,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/login", "/api/v1/auth/refresh").permitAll()
                         .requestMatchers("/files/**", "/doc/**", "/swagger-ui/**", "/api-docs/**").permitAll()
-                        .requestMatchers("/api/v1/roles").permitAll()
+                        .requestMatchers("/api/v1/roles", "api/v1/files/upload").permitAll()
                         .requestMatchers("/api/v1/users/register", "/api/v1/users/verified-otp", "/api/v1/users/resend-otp").permitAll()
                         .anyRequest().authenticated()
                 )

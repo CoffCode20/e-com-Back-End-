@@ -1,18 +1,18 @@
 package co.istad.ishop.service.impl;
 
-import co.istad.ishop.entities.User;
-import co.istad.ishop.exception.UserNotVerifiedException;
-import co.istad.ishop.repository.RoleRepository;
-import co.istad.ishop.repository.UserRepository;
-import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import co.istad.ishop.entities.User;
+import co.istad.ishop.exception.UserNotVerifiedException;
+import co.istad.ishop.repository.UserRepository;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor

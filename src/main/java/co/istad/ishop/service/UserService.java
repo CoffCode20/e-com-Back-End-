@@ -1,6 +1,5 @@
 package co.istad.ishop.service;
 
-import co.istad.ishop.entities.User;
 import co.istad.ishop.model.request.SetNewPasswordRequest;
 import co.istad.ishop.model.request.UpdatePasswordRequest;
 import co.istad.ishop.model.request.UserCreateDTO;
@@ -11,7 +10,7 @@ import java.util.List;
 
 public interface UserService {
 
-    User createUser(UserCreateDTO userCreateDto);
+    void createUser(UserCreateDTO userCreateDto);
 
     List<UserRespondDTO> findAllUsers();
 
@@ -25,6 +24,6 @@ public interface UserService {
 
     void deleteUser(String uuid);
 
-    User promoteUserToAdmin(String username);
+    void promoteUserToAdmin(String username);
 
 }
