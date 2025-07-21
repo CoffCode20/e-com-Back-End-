@@ -21,6 +21,7 @@ import co.istad.ishop.repository.TokenRepository;
 import co.istad.ishop.security.jwt.JwtService;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +38,7 @@ public class AuthServiceImpl {
     @Value("${jwt.refresh-token.expire}")
     private long refreshTokenExpiry;
 
+    @Transactional
     public AuthResponse login(AuthRequest request) {
         try{
             authenticationManager.authenticate(
@@ -73,7 +75,7 @@ public class AuthServiceImpl {
             throw new AccessDeniedException("This not the refresh token");
         }
 
-        Token token = tokenRepository.findByTokenAndValid(refreshToken, true)
+        tokenRepository.findByTokenAndValid(refreshToken, true)
                 .orElseThrow(() -> new JwtException("Refresh token have been revoked"));
 
         String username = jwtService.extractUsername(refreshToken);
@@ -90,7 +92,7 @@ public class AuthServiceImpl {
         saveToken(newAccessToken, username, "ACCESS", System.currentTimeMillis() + accessTokenExpiry);
         saveToken(newRefreshToken, username, "REFRESH", System.currentTimeMillis() + refreshTokenExpiry);
 
-        return new AuthResponse(newAccessToken, refreshToken, "Bearer");
+        return new AuthResponse(newAccessToken, newRefreshToken, "Bearer");
     }
 
 

@@ -7,7 +7,10 @@ import lombok.Data;
 @Data
 public class Token {
     @Id
-    @Column(columnDefinition = "TEXT")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @Column(columnDefinition = "TEXT", unique = true)
     private String token;
     private String username;
     private String type; // type of token

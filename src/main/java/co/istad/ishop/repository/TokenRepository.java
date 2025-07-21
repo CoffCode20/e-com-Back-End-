@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface TokenRepository extends JpaRepository<Token, String> {
+public interface TokenRepository extends JpaRepository<Token, Integer> {
     List<Token> findByUsernameAndTypeAndValid(String username, String type, boolean valid);
     Optional<Token> findByTokenAndValid(String token, boolean valid);
 }

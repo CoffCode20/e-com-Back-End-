@@ -93,12 +93,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 //                    SecurityContextHolder.getContext().setAuthentication(authToken);
 //                }
 //            }
-            try{
-                // Check token validity and revocation status
-                if (!jwtService.isTokenValid(token)) {
-                    sendErrorResponse(response, "Invalid or expired access token");
+            try {
+                if (!jwtService.isAccessToken(token)) {
+                    sendErrorResponse(response, "Only access_token is supported");
                     return;
                 }
+
+                if (!jwtService.isTokenValid(token)) {
+                    sendErrorResponse(response, "Invalid or expired access_token");
+                    return;
+                }
+
                 if (tokenRepository.findByTokenAndValid(token, true).isEmpty()) {
                     sendErrorResponse(response, "Access token has been revoked");
                     return;
@@ -113,11 +118,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
 
-                filterChain.doFilter(request, response);
-            }catch (RuntimeException ex){
+            } catch (RuntimeException ex) {
                 sendErrorResponse(response, ex.getMessage());
+                return;
             }
         }
+
+        // Always allow the request to continue
+        filterChain.doFilter(request, response);
 
 //        filterChain.doFilter(request, response);
     }
@@ -133,7 +141,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 .data(null)
                 .build();
         response.getWriter().write(objectMapper.writeValueAsString(error));
+        response.getWriter().flush();
+        response.getWriter().close(); // force close writer
     }
-
 }
 

@@ -3,7 +3,7 @@ spring:
     name: ISHOP
 # config POSTGRES Database
   datasource:
-    url: jdbc:postgresql://localhost:5432/ishop-db
+    url: jdbc:postgresql://localhost:5432/db
     username: postgres
     password: supermatra
     driver-class-name: org.postgresql.Driver
@@ -30,6 +30,10 @@ spring:
             enable: true
             required: true
     protocol: smtp
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
 
 # Config Swagger
 springdoc:
